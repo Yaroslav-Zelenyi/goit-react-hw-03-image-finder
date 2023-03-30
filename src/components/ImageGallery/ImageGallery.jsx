@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { fetchApi } from 'Services/fetchApi';
+import { Component } from 'react';
+import { getImages } from 'Services/getImages';
 import { ImageGalleryItem } from 'components/ImageGalleryItem/ImageGalleryItem';
 import { Loader } from 'components/Loader/Loader';
 import { Modal } from 'components/Modal/Modal';
@@ -10,12 +10,12 @@ export class ImageGallery extends Component {
   state = {
     images: [],
     query: this.props.query,
-    loading: false,
+    isLoading: false,
     isModalOpen: false,
     selectedImage: {},
   };
   componentDidMount() {
-    window.addEventListener('keydown', this.modalToggle);
+    window.addEventListener('keydown', this.handleKeyDown);
   }
 
   componentDidUpdate(prevProps, _) {
@@ -23,8 +23,8 @@ export class ImageGallery extends Component {
       this.props.query !== prevProps.query ||
       prevProps.currentPage !== this.props.currentPage
     ) {
-      this.setState({ loading: true });
-      fetchApi(this.props.query, this.props.currentPage)
+      this.setState({ isLoading: true });
+      getImages(this.props.query, this.props.currentPage)
         .then(data => {
           if (this.props.currentPage === 1) {
             this.setState({
@@ -36,44 +36,47 @@ export class ImageGallery extends Component {
             }));
           }
           this.props.onFetchComplete(data.hits);
-          this.setState({ loading: false });
+          this.setState({ isLoading: false });
         })
         .catch(error => {
           alert(`Error fetching API: ${error}`);
-          this.setState({ loading: false });
+          this.setState({ isLoading: false });
         });
     }
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.modalToggle);
+    window.removeEventListener('keydown', this.handleKeyDown);
   }
 
-  clickHandler = id => {
-    const image = this.state.images.find(image => image.id === id);
-    const imageInfo = { largeImageURL: image.largeImageURL, tags: image.tags };
+  handleImageClick = id => {
+    const selectedImage = this.state.images.find(image => image.id === id);
+    const imageInfo = {
+      largeImageURL: selectedImage.largeImageURL,
+      tags: selectedImage.tags,
+    };
     this.setState({ selectedImage: imageInfo, isModalOpen: true });
   };
 
-  modalToggle = e => {
-    if (e.currentTarget === e.target || e.code === 'Escape')
+  handleKeyDown = event => {
+    if (event.currentTarget === event.target || event.code === 'Escape')
       this.setState(state => ({ isModalOpen: !state.isModalOpen }));
   };
 
   render() {
-    const { loading, isModalOpen, selectedImage } = this.state;
+    const { isLoading, isModalOpen, selectedImage } = this.state;
     return (
       <ul className={css.gallery} onClick={this.windowClose}>
         {this.state.images.map(item => (
           <ImageGalleryItem
             image={item}
             key={item.id}
-            onClick={() => this.clickHandler(item.id)}
+            onClick={() => this.handleImageClick(item.id)}
           />
         ))}
-        {loading && <Loader />}
+        {isLoading && <Loader />}
         {isModalOpen && (
-          <Modal image={selectedImage} onClick={this.modalToggle} />
+          <Modal image={selectedImage} onClick={this.handleKeyDown} />
         )}
       </ul>
     );
@@ -81,7 +84,7 @@ export class ImageGallery extends Component {
 }
 
 ImageGallery.propTypes = {
- query: PropTypes.string.isRequired,
- onFetchComplete: PropTypes.func.isRequired,
- currentPage: PropTypes.number.isRequired,
+  query: PropTypes.string.isRequired,
+  onFetchComplete: PropTypes.func.isRequired,
+  currentPage: PropTypes.number.isRequired,
 };

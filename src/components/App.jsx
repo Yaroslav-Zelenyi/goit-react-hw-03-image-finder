@@ -10,7 +10,7 @@ export class App extends Component {
     loading: false,
   };
 
-  onSubmit = data => {
+  submit = data => {
     this.setState({ query: data, page: 1 });
   };
 
@@ -20,7 +20,7 @@ export class App extends Component {
     }
   };
 
-  onBtnClick = () => {
+  btnClick = () => {
     this.setState(state => ({ page: state.page + 1 }));
   };
 
@@ -42,13 +42,13 @@ export class App extends Component {
           paddingBottom: 20,
         }}
       >
-        <Searchbar query={this.onSubmit} />
+        <Searchbar query={this.submit} />
         <ImageGallery
           query={query}
           onFetchComplete={this.onFetch}
           currentPage={page}
         />
-        {success && <Button clickHandler={this.onBtnClick} />}
+        {success && <Button clickHandler={this.btnClick} />}
       </div>
     );
   }

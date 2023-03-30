@@ -7,31 +7,20 @@ export class Searchbar extends Component {
     value: '',
   };
 
-  componentDidMount() {
-    const storage = JSON.parse(localStorage.getItem('searchValue'));
-    if (storage) this.setState({ value: storage.value });
-  }
-
-  componentDidUpdate(_, prevState) {
-    if (prevState.value !== this.state.value && this.state.value !== '')
-      localStorage.setItem('searchValue', JSON.stringify(this.state));
-  }
-
-  submitHandler = e => {
-    e.preventDefault();
+  handleSubmit = event => {
+    event.preventDefault();
     this.props.query(this.state.value);
-    localStorage.removeItem('searchValue');
     this.setState({ value: '' });
   };
 
-  onChangeHandler = e => {
-    this.setState({ value: e.target.value });
+  handleChageOn = event => {
+    this.setState({ value: event.target.value });
   };
 
   render() {
     return (
       <header className={css.Searchbar}>
-        <form className={css.SearchForm} onSubmit={this.submitHandler}>
+        <form className={css.SearchForm} onSubmit={this.handleSubmit}>
           <button
             type="submit"
             className={css.SearchForm_button}
@@ -45,7 +34,7 @@ export class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            onChange={this.onChangeHandler}
+            onChange={this.handleChageOn}
             value={this.state.value}
           />
         </form>
@@ -55,5 +44,5 @@ export class Searchbar extends Component {
 }
 
 Searchbar.propTypes = {
-  query: PropTypes.func,
+  query: PropTypes.func.isRequired,
 };

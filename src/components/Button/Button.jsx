@@ -10,5 +10,5 @@ export function Button({ clickHandler }) {
 }
 
 Button.propTypes = {
-  clickHandler: PropTypes.func,
+  clickHandler: PropTypes.func.isRequired,
 };
