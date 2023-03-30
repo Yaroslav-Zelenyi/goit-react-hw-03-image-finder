@@ -14,9 +14,6 @@ export class ImageGallery extends Component {
     isModalOpen: false,
     selectedImage: {},
   };
-  componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
-  }
 
   componentDidUpdate(prevProps, _) {
     if (
@@ -43,10 +40,6 @@ export class ImageGallery extends Component {
           this.setState({ isLoading: false });
         });
     }
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
   }
 
   handleImageClick = id => {
