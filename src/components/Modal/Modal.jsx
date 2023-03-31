@@ -4,11 +4,11 @@ import css from './Modal.module.css';
 
 export class Modal extends Component {
   componentDidMount() {
-    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keydown', this.props.onClick);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keydown', this.props.onClick);
   }
 
   render() {
@@ -24,7 +24,7 @@ export class Modal extends Component {
       </div>
     );
   }
-};
+}
 
 Modal.propTypes = {
   image: PropTypes.object.isRequired,
